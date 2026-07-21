@@ -105,13 +105,11 @@
   /* PROJECTS */
   .proj-card{border:1px solid var(--border); border-radius:12px; overflow:hidden; background:var(--surface); margin-bottom:18px;}
   .proj-banner{
-    height:120px; display:flex; align-items:center; justify-content:center;
-    font-family:var(--mono); font-size:13px; color:var(--dim); letter-spacing:.05em;
-    background:
-      repeating-linear-gradient(135deg, rgba(0,0,0,0.025) 0px, rgba(0,0,0,0.025) 1px, transparent 1px, transparent 14px),
-      var(--surface-2);
+    height:170px; overflow:hidden;
+    background:var(--surface-2);
     border-bottom:1px solid var(--border);
   }
+  .proj-banner img{width:100%; height:100%; object-fit:cover; object-position:top; display:block;}
   .proj-body{padding:20px 22px 22px;}
   .proj-top{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:6px;}
   .proj-name{font-size:16.5px; font-weight:700;}
@@ -245,7 +243,7 @@
       <div class="stack-chip"><div class="glyph"><img src="https://cdn.simpleicons.org/opencv" alt="" loading="lazy"></div>OpenCV</div>
       <div class="stack-chip"><div class="glyph"><img src="https://cdn.simpleicons.org/docker" alt="" loading="lazy"></div>Docker</div>
       <div class="stack-chip"><div class="glyph"><img src="https://cdn.simpleicons.org/githubactions" alt="" loading="lazy"></div>GitHub Actions</div>
-      <div class="stack-chip"><div class="glyph"><img src="https://cdn.simpleicons.org/amazonaws/000000" alt="" loading="lazy"></div>AWS EC2</div>
+      <div class="stack-chip"><div class="glyph"><img src="https://cdn.simpleicons.org/amazonaws" alt="" loading="lazy"></div>AWS EC2</div>
       <div class="stack-chip"><div class="glyph"><img src="https://cdn.simpleicons.org/linux/000000" alt="" loading="lazy"></div>Linux</div>
     </div>
   </div>
@@ -259,10 +257,10 @@
     <h2 class="sec-title">Featured Projects</h2>
 
     <div class="proj-card">
-      <div class="proj-banner">FINTRA · GOLANG + SVELTE</div>
+      <div class="proj-banner"><img src="assets/fintra-budgets.png" alt="Expense Tracking Chatbot budgets screen" loading="lazy"></div>
       <div class="proj-body">
         <div class="proj-top">
-          <div class="proj-name">Fintra — Expense Tracking Chatbot</div>
+          <div class="proj-name">Expense Tracking Chatbot</div>
           <div class="proj-links"><a href="https://github.com/sarthak733" target="_blank" rel="noopener">View on GitHub</a></div>
         </div>
         <p class="proj-desc">
@@ -278,7 +276,7 @@
     </div>
 
     <div class="proj-card">
-      <div class="proj-banner">CAREERAI PRO · REACT + PYTHON</div>
+      <div class="proj-banner"><img src="assets/careerai-contact.png" alt="CareerAI Pro contact page" loading="lazy"></div>
       <div class="proj-body">
         <div class="proj-top">
           <div class="proj-name">CareerAI Pro — Career Guidance System</div>
@@ -297,7 +295,7 @@
     </div>
 
     <div class="proj-card">
-      <div class="proj-banner">ONLINE BOOK STORE · MERN</div>
+      <div class="proj-banner"><img src="assets/bookstore-mockup.svg" alt="Online Book Store homepage mockup" loading="lazy"></div>
       <div class="proj-body">
         <div class="proj-top">
           <div class="proj-name">Online Book Store</div>
