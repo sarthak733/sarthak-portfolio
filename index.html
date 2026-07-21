@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sarthak Yadav — Systems Status</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0B1220;
+    --panel: #121B2E;
+    --panel-2: #17223A;
+    --line: #223052;
+    --text: #E6EDF7;
+    --muted: #7C8DAE;
+    --muted-2: #56658A;
+    --green: #3FB68B;
+    --green-dim: #1E4F42;
+    --amber: #E8A33D;
+    --blue: #5B8DEF;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html{ scroll-behavior: smooth; }
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a{ color: inherit; text-decoration: none; }
+  .wrap{ max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+  .statusbar{
+    border-bottom: 1px solid var(--line);
+    background: rgba(18,27,46,0.85);
+    backdrop-filter: blur(6px);
+    position: sticky; top:0; z-index: 50;
+  }
+  .statusbar-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 12px 24px; max-width: 980px; margin:0 auto;
+    font-family: var(--mono); font-size: 13px; color: var(--muted);
+  }
+  .status-left{ display:flex; align-items:center; gap:10px; }
+  .dot{
+    width:8px; height:8px; border-radius:50%;
+    background: var(--green);
+    box-shadow: 0 0 0 0 rgba(63,182,139,0.6);
+    animation: pulse 2.2s infinite;
+  }
+  @keyframes pulse{
+    0%{ box-shadow: 0 0 0 0 rgba(63,182,139,0.55); }
+    70%{ box-shadow: 0 0 0 6px rgba(63,182,139,0); }
+    100%{ box-shadow: 0 0 0 0 rgba(63,182,139,0); }
+  }
+  .statusbar nav{ display:flex; gap:20px; }
+  .statusbar nav a{ color: var(--muted); transition: color .15s; }
+  .statusbar nav a:hover{ color: var(--text); }
+
+  .hero{ padding: 90px 0 70px; border-bottom: 1px solid var(--line); }
+  .eyebrow{
+    font-family: var(--mono); font-size: 12px; letter-spacing: .08em;
+    color: var(--green); text-transform: uppercase; margin-bottom: 18px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .hero h1{
+    font-size: clamp(34px, 6vw, 56px);
+    font-weight: 700; letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+  .hero h1 span{ color: var(--muted); font-weight: 400; }
+  .hero .role{
+    font-family: var(--mono); font-size: 16px; color: var(--muted);
+    margin-bottom: 26px;
+  }
+  .hero .role b{ color: var(--text); font-weight: 600; }
+  .hero p.desc{ max-width: 620px; color: var(--muted); font-size: 16px; margin-bottom: 34px; }
+  .hero-actions{ display:flex; gap:14px; flex-wrap: wrap; }
+  .btn{
+    font-family: var(--mono); font-size: 13px; padding: 10px 18px;
+    border-radius: 6px; border: 1px solid var(--line); display:inline-flex; align-items:center; gap:8px;
+    transition: all .15s;
+  }
+  .btn.primary{ background: var(--green); color: #08150F; border-color: var(--green); font-weight: 600; }
+  .btn.primary:hover{ background: #35a37c; }
+  .btn.ghost:hover{ border-color: var(--muted-2); background: var(--panel); }
+
+  .metrics{
+    display:grid; grid-template-columns: repeat(4, 1fr); gap:1px;
+    background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow:hidden;
+    margin-top: 50px;
+  }
+  .metric{ background: var(--panel); padding: 18px 16px; }
+  .metric .num{ font-family: var(--mono); font-size: 24px; font-weight: 600; color: var(--text); }
+  .metric .num .unit{ font-size: 14px; color: var(--green); }
+  .metric .label{ font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  section{ padding: 64px 0; border-bottom: 1px solid var(--line); }
+  .section-head{ display:flex; align-items: baseline; gap: 14px; margin-bottom: 34px; }
+  .section-head .tag{
+    font-family: var(--mono); font-size: 12px; color: var(--muted-2); border: 1px solid var(--line);
+    border-radius: 4px; padding: 3px 8px;
+  }
+  .section-head h2{ font-size: 22px; font-weight: 700; }
+
+  .log-entry{
+    display:grid; grid-template-columns: 130px 1fr; gap: 24px;
+    padding: 22px 0; border-top: 1px solid var(--line);
+  }
+  .log-entry:first-child{ border-top:none; }
+  .log-time{ font-family: var(--mono); font-size: 12px; color: var(--muted-2); padding-top:3px; }
+  .log-body h3{ font-size: 17px; font-weight: 600; margin-bottom: 2px; }
+  .log-body .sub{ font-family: var(--mono); font-size: 12.5px; color: var(--green); margin-bottom: 10px; }
+  .log-body ul{ list-style: none; color: var(--muted); font-size: 14.5px; }
+  .log-body li{ padding-left: 18px; position: relative; margin-bottom: 6px; }
+  .log-body li::before{ content:"›"; position:absolute; left:0; color: var(--muted-2); }
+
+  .services{ display:grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 720px){ .services{ grid-template-columns: 1fr; } }
+  .service{
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    padding: 22px; display:flex; flex-direction:column; gap: 12px;
+    transition: border-color .15s, transform .15s;
+  }
+  .service:hover{ border-color: var(--muted-2); transform: translateY(-2px); }
+  .service-top{ display:flex; align-items:center; justify-content:space-between; }
+  .service-name{ font-size: 16px; font-weight: 600; }
+  .badge{
+    font-family: var(--mono); font-size: 10.5px; letter-spacing:.04em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 20px; display:flex; align-items:center; gap:6px;
+  }
+  .badge.deployed{ background: var(--green-dim); color: var(--green); }
+  .badge .dot-sm{ width:6px; height:6px; border-radius:50%; background: currentColor; }
+  .service p{ color: var(--muted); font-size: 14px; flex:1; }
+  .stack{ display:flex; flex-wrap: wrap; gap: 6px; }
+  .chip{
+    font-family: var(--mono); font-size: 11px; color: var(--blue);
+    background: rgba(91,141,239,0.1); border: 1px solid rgba(91,141,239,0.25);
+    padding: 3px 8px; border-radius: 4px;
+  }
+  .service-metric{
+    font-family: var(--mono); font-size: 12px; color: var(--amber);
+    border-top: 1px dashed var(--line); padding-top: 10px; margin-top: 4px;
+  }
+  .service-link{ font-family: var(--mono); font-size: 12px; color: var(--muted); display:flex; align-items:center; gap:6px; }
+  .service-link:hover{ color: var(--text); }
+
+  .stack-grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap: 22px 40px; }
+  @media (max-width: 720px){ .stack-grid{ grid-template-columns: 1fr; } }
+  .stack-group .stack-title{
+    font-family: var(--mono); font-size: 12px; color: var(--muted-2); text-transform: uppercase;
+    letter-spacing: .05em; margin-bottom: 10px; display:flex; justify-content: space-between;
+  }
+  .bar-track{ height: 6px; background: var(--panel-2); border-radius: 4px; overflow:hidden; margin-bottom: 14px; }
+  .bar-fill{ height: 100%; background: linear-gradient(90deg, var(--green), var(--blue)); border-radius: 4px; }
+  .stack-items{ display:flex; flex-wrap: wrap; gap: 8px; margin-top: -6px; margin-bottom: 18px; }
+  .tag-item{
+    font-family: var(--mono); font-size: 12px; color: var(--text);
+    background: var(--panel); border: 1px solid var(--line); padding: 5px 10px; border-radius: 6px;
+  }
+
+  .split{ display:grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  @media (max-width: 720px){ .split{ grid-template-columns: 1fr; } }
+  .card-line{ padding: 16px 0; border-top: 1px solid var(--line); }
+  .card-line:first-child{ border-top: none; padding-top: 0; }
+  .card-line h4{ font-size: 15px; font-weight: 600; }
+  .card-line .meta{ font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  footer{ padding: 50px 0 70px; }
+  .footer-inner{ display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 20px; }
+  .footer-inner .brand{ font-family: var(--mono); color: var(--muted); font-size: 13px; }
+  .footer-links{ display:flex; gap: 20px; font-family: var(--mono); font-size: 13px; color: var(--muted); }
+  .footer-links a:hover{ color: var(--green); }
+
+  @media (max-width: 600px){
+    .metrics{ grid-template-columns: repeat(2, 1fr); }
+    .log-entry{ grid-template-columns: 1fr; gap: 6px; }
+    .statusbar nav{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="statusbar">
+    <div class="statusbar-inner">
+      <div class="status-left">
+        <span class="dot"></span>
+        <span>sarthak.dev — all systems operational</span>
+      </div>
+      <nav>
+        <a href="#experience">experience</a>
+        <a href="#projects">projects</a>
+        <a href="#skills">stack</a>
+        <a href="#education">education</a>
+        <a href="#contact">contact</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <section class="hero" style="border-bottom:1px solid var(--line);">
+      <div class="eyebrow"><span class="dot" style="animation:none;"></span> status: open to opportunities</div>
+      <h1>Sarthak Yadav<br><span>ships full-stack products with AI wired in from day one.</span></h1>
+      <div class="role">Full-Stack Engineer <b>·</b> AI/ML Enthusiast <b>·</b> Golang &amp; MERN</div>
+      <p class="desc">
+        I build end-to-end web applications and bring machine learning into production —
+        from multi-agent RAG chatbots to recommendation engines — using Golang, the MERN stack,
+        and whatever the problem actually calls for. Currently based in Bareilly, UP.
+      </p>
+      <div class="hero-actions">
+        <a class="btn primary" href="mailto:sarthakyadav807@gmail.com">→ send a message</a>
+        <a class="btn ghost" href="https://github.com/sarthak733" target="_blank">github/sarthak733</a>
+        <a class="btn ghost" href="https://linkedin.com/in/sarthak-yadav" target="_blank">linkedin</a>
+      </div>
+
+      <div class="metrics">
+        <div class="metric"><div class="num">5<span class="unit">-stage</span></div><div class="label">RAG pipeline shipped in prod</div></div>
+        <div class="metric"><div class="num">3<span class="unit">+</span></div><div class="label">full-stack apps built solo</div></div>
+        <div class="metric"><div class="num">2<span class="unit"> mo</span></div><div class="label">internship, production systems</div></div>
+        <div class="metric"><div class="num">6<span class="unit">+</span></div><div class="label">languages &amp; frameworks in daily use</div></div>
+      </div>
+    </section>
+
+    <section id="experience">
+      <div class="section-head"><span class="tag">01</span><h2>Deployment Log — Experience</h2></div>
+
+      <div class="log-entry">
+        <div class="log-time">Jul 2025 —<br>Aug 2025</div>
+        <div class="log-body">
+          <h3>Intern · Cross Atlantic Software</h3>
+          <div class="sub">Patparganj, New Delhi</div>
+          <ul>
+            <li>Built a full-stack, multi-agent RAG chatbot using FastAPI, LangChain/LangGraph, and Next.js — a 5-stage pipeline (Intake → Clarification → Refiner → Retrieval → Generation) for multi-turn Q&amp;A.</li>
+            <li>Implemented semantic search with Qdrant and OpenAI embeddings, plus a cron-scheduled maintainer keeping the vector store current daily.</li>
+            <li>Deployed the backend on AWS EC2 (Gunicorn + Nginx, HTTPS/CORS) and the frontend on Vercel, using MongoDB and Neo4j knowledge graphs for structured retrieval.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="projects">
+      <div class="section-head"><span class="tag">02</span><h2>Running Services — Projects</h2></div>
+
+      <div class="services">
+
+        <div class="service">
+          <div class="service-top">
+            <div class="service-name">Expense Chatbot</div>
+            <div class="badge deployed"><span class="dot-sm"></span>live</div>
+          </div>
+          <p>Natural-language expense tracker — a Go backend that parses free-form messages ("spent 15 on coffee yesterday") into structured expenses.</p>
+          <div class="stack">
+            <span class="chip">Golang</span><span class="chip">Svelte</span><span class="chip">PostgreSQL</span><span class="chip">ConnectRPC</span><span class="chip">Ent ORM</span>
+          </div>
+          <div class="service-metric">→ JWT auth, budgets, recurring expenses, monthly insights</div>
+          <a class="service-link" href="https://github.com/sarthak733" target="_blank">→ source</a>
+        </div>
+
+        <div class="service">
+          <div class="service-top">
+            <div class="service-name">Online Book Store</div>
+            <div class="badge deployed"><span class="dot-sm"></span>live</div>
+          </div>
+          <p>Full-stack e-commerce app — catalog search, reviews, discussion forums, and a scalable inventory schema.</p>
+          <div class="stack">
+            <span class="chip">MongoDB</span><span class="chip">Express.js</span><span class="chip">React.js</span><span class="chip">Node.js</span>
+          </div>
+          <div class="service-metric">→ built for growing inventory &amp; traffic without degradation</div>
+          <a class="service-link" href="https://github.com/sarthak733" target="_blank">→ source</a>
+        </div>
+
+        <div class="service">
+          <div class="service-top">
+            <div class="service-name">CareerAI Pro</div>
+            <div class="badge deployed"><span class="dot-sm"></span>live</div>
+          </div>
+          <p>AI-enhanced career guidance platform — hybrid recommender + knowledge graph mapping skills to careers, with a resume builder and cover-letter generator.</p>
+          <div class="stack">
+            <span class="chip">React.js</span><span class="chip">Node.js/Django</span><span class="chip">Python</span><span class="chip">MongoDB</span>
+          </div>
+          <div class="service-metric">→ career prediction, skill-gap analysis, stream prediction</div>
+          <a class="service-link" href="https://github.com/sarthak733" target="_blank">→ source</a>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="section-head"><span class="tag">03</span><h2>Resource Utilization — Stack</h2></div>
+      <div class="stack-grid">
+
+        <div class="stack-group">
+          <div class="stack-title"><span>Frontend</span><span>primary</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:88%;"></div></div>
+          <div class="stack-items">
+            <span class="tag-item">React.js</span><span class="tag-item">Svelte</span><span class="tag-item">HTML5</span>
+            <span class="tag-item">CSS3</span><span class="tag-item">Tailwind CSS</span><span class="tag-item">Redux</span>
+          </div>
+        </div>
+
+        <div class="stack-group">
+          <div class="stack-title"><span>Backend</span><span>primary</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:90%;"></div></div>
+          <div class="stack-items">
+            <span class="tag-item">Node.js / Express.js</span><span class="tag-item">Golang (Gin/Fiber)</span>
+            <span class="tag-item">REST APIs</span><span class="tag-item">GraphQL</span>
+          </div>
+        </div>
+
+        <div class="stack-group">
+          <div class="stack-title"><span>AI / ML</span><span>growing</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:70%;"></div></div>
+          <div class="stack-items">
+            <span class="tag-item">Python</span><span class="tag-item">TensorFlow</span><span class="tag-item">PyTorch</span>
+            <span class="tag-item">Scikit-learn</span><span class="tag-item">Pandas</span><span class="tag-item">OpenCV</span>
+          </div>
+        </div>
+
+        <div class="stack-group">
+          <div class="stack-title"><span>Databases &amp; DevOps</span><span>solid</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:78%;"></div></div>
+          <div class="stack-items">
+            <span class="tag-item">MongoDB</span><span class="tag-item">PostgreSQL</span><span class="tag-item">MySQL</span>
+            <span class="tag-item">Redis</span><span class="tag-item">Docker</span><span class="tag-item">GitHub Actions</span><span class="tag-item">AWS EC2</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="education">
+      <div class="section-head"><span class="tag">04</span><h2>Config — Education</h2></div>
+      <div class="split">
+        <div>
+          <div class="card-line">
+            <h4>B.Tech, Computer Science &amp; Engineering</h4>
+            <div class="meta">Shri Ram Murti Smarak College of Engineering &amp; Technology · 2022–2026</div>
+          </div>
+          <div class="card-line">
+            <h4>C.B.S.E. (12th)</h4>
+            <div class="meta">Vidya Bhavan Public School, Bareilly, UP · 88.6%</div>
+          </div>
+        </div>
+        <div>
+          <div class="card-line">
+            <h4>Languages &amp; OS</h4>
+            <div class="meta">JavaScript · TypeScript · Python · Golang · C++</div>
+          </div>
+          <div class="card-line">
+            <h4>Networking &amp; Environments</h4>
+            <div class="meta">WSL · Ubuntu · Windows Server · TCP/IP · DNS</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer id="contact">
+    <div class="wrap">
+      <div class="footer-inner">
+        <div class="brand">© <span id="year"></span> Sarthak Yadav — built with intent, deployed with confidence.</div>
+        <div class="footer-links">
+          <a href="mailto:sarthakyadav807@gmail.com">email</a>
+          <a href="https://github.com/sarthak733" target="_blank">github</a>
+          <a href="https://linkedin.com/in/sarthak-yadav" target="_blank">linkedin</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
